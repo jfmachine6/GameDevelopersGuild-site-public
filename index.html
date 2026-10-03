@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#101114">
+    <meta
+      name="description"
+      content="The Game Developers Guild is a Student Organization at Northern Kentucky University focused on game development and Game Jams."
+    >
+    <title>Game Developers Guild | NKU</title>
+    <link rel="stylesheet" href="./assets/css/styles.css">
+    <script type="module" src="./assets/js/navbar.js"></script>
+    <script type="module" src="./assets/js/flame-title.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <site-navbar></site-navbar>
+
+    <main id="main">
+      <section class="hero" id="top" aria-labelledby="hero-title">
+        <div class="hero__copy">
+          <p class="eyebrow">Student Organization at Northern Kentucky University</p>
+          <h1 id="hero-title" class="hero__title">
+            <span class="hero__title-fallback">Game Developers<br>Guild</span>
+            <svg
+              class="hero__title-video"
+              viewBox="0 0 507 154"
+              preserveAspectRatio="none"
+              aria-hidden="true"
+            >
+              <defs>
+                <mask id="flame-title-mask" x="0" y="0" width="507" height="154" maskUnits="userSpaceOnUse">
+                  <rect width="507" height="154" fill="black"/>
+                  <text x="0" y="60.5" fill="white" font-family="Arial, Helvetica, sans-serif" font-size="64" font-weight="700" letter-spacing="-2.56">Game Developers</text>
+                  <text x="0" y="137.5" fill="white" font-family="Arial, Helvetica, sans-serif" font-size="64" font-weight="700" letter-spacing="-2.56">Guild</text>
+                </mask>
+              </defs>
+              <foreignObject width="507" height="154" mask="url(#flame-title-mask)">
+                <video
+                  xmlns="http://www.w3.org/1999/xhtml"
+                  class="hero__title-fire"
+                  src="./assets/images/FlamingBackground_Animated_A.mp4"
+                  muted
+                  loop
+                  playsinline
+                  preload="metadata"
+                ></video>
+              </foreignObject>
+            </svg>
+          </h1>
+          <p class="hero__description">
+            A club for game development, community, and creative collaboration.
+          </p>
+          <div class="hero__links">
+            <a class="button button--gold" href="#about">About the Guild</a>
+            <a class="button button--quiet" href="#game-jams">Game Jams</a>
+          </div>
+        </div>
+
+        <img
+          class="hero__art"
+          src="./assets/images/GameDevGuild_Logo_A_beta.png"
+          alt=""
+          aria-hidden="true"
+        >
+      </section>
+
+      <section class="content-panel about" id="about" aria-labelledby="about-title">
+        <div class="section-heading">
+          <span class="section-heading__rule" aria-hidden="true"></span>
+          <h2 id="about-title">About the Guild</h2>
+        </div>
+        <p>
+          The Game Developers Guild is a Student Organization at Northern Kentucky
+          University, focused on game development and bringing together a community
+          of game developers.
+        </p>
+      </section>
+
+      <section class="activities" aria-labelledby="activities-title">
+        <div class="section-heading">
+          <span class="section-heading__rule" aria-hidden="true"></span>
+          <h2 id="activities-title">What we do</h2>
+        </div>
+        <div class="activity-grid">
+          <article class="activity-card">
+            <span class="activity-card__number">01</span>
+            <h3>Game development</h3>
+            <p>The Guild brings together students interested in game development.</p>
+          </article>
+          <article class="activity-card" id="game-jams">
+            <span class="activity-card__number">02</span>
+            <h3>Game Jams</h3>
+            <p>The Guild hosts Game Jam events focused on making games.</p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>Game Developers Guild</span>
+      <span>Student Organization at Northern Kentucky University</span>
+    </footer>
+  </body>
+</html>
