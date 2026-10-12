@@ -1,5 +1,5 @@
 const siteRoot = new URL("../../", import.meta.url);
-const logoUrl = new URL("../images/GameDevGuild_Logo_A_beta.png", import.meta.url);
+const logoUrl = new URL("../images/guild-logo-joey.png", import.meta.url);
 
 class SiteNavbar extends HTMLElement {
   constructor() {
@@ -10,7 +10,7 @@ class SiteNavbar extends HTMLElement {
   connectedCallback() {
     const homeUrl = new URL("#top", siteRoot);
     const aboutUrl = new URL("#about", siteRoot);
-    const eventsUrl = new URL("#game-jams", siteRoot);
+    const eventsUrl = new URL("calendar.html", siteRoot);
 
     this.shadowRoot.innerHTML = `
       <style>
@@ -18,31 +18,35 @@ class SiteNavbar extends HTMLElement {
         * { box-sizing: border-box; }
         .bar {
           align-items: center;
-          background: #101114;
-          border-bottom: 1px solid #303138;
+          background: radial-gradient(ellipse at 45% 100%, #71301b, transparent 70%), linear-gradient(100deg, #191416, #351a18, #191416);
+          border-bottom: 3px solid #d9a441;
+          box-shadow: 0 3px 18px rgba(217, 164, 65, .18);
           color: #eee9df;
           display: flex;
           font-family: Arial, Helvetica, sans-serif;
           justify-content: space-between;
-          min-height: 72px;
+          min-height: 132px;
           padding: 0 max(22px, calc((100vw - 1064px) / 2));
         }
         a { color: inherit; text-decoration: none; }
-        .brand { align-items: center; display: inline-flex; gap: 10px; }
+        .brand { align-items: center; display: inline-flex; gap: 14px; }
         .brand__logo {
           display: block;
-          height: 52px;
+          filter: drop-shadow(0 0 12px rgba(185, 66, 45, .4));
+          height: 108px;
           object-fit: contain;
-          width: 52px;
+          width: 108px;
         }
         .brand__name {
-          font-size: 13px;
+          font-size: 15px;
           font-weight: 700;
           line-height: 1.3;
         }
         .brand__name span { color: #aaa69f; display: block; font-size: 10px; font-weight: 400; }
         nav { align-items: center; display: flex; gap: 26px; }
-        nav a { color: #c6c2bb; font-size: 13px; transition: color .15s ease; }
+        nav a { border-bottom: 2px solid transparent; color: #eee9df; font-size: 16px; font-weight: 700; padding: 12px 2px; transition: color .15s ease, border-color .15s ease; }
+        nav a:hover, nav a:focus-visible, nav a[aria-current="page"] { border-color: #d9a441; }
+        a:focus-visible, button:focus-visible { outline: 2px solid #d9a441; outline-offset: 4px; }
         nav a:hover, nav a:focus-visible { color: #d9a441; }
         .menu-toggle {
           background: none;
@@ -55,7 +59,10 @@ class SiteNavbar extends HTMLElement {
           padding: 9px 12px;
         }
         @media (max-width: 680px) {
-          .bar { min-height: 66px; padding: 0 16px; }
+          .bar { min-height: 96px; padding: 0 16px; }
+          .brand { gap: 8px; }
+          .brand__logo { width: 72px; height: 72px; }
+          .brand__name { font-size: 12px; }
           .menu-toggle { display: block; }
           nav {
             align-items: stretch;
@@ -86,13 +93,19 @@ class SiteNavbar extends HTMLElement {
         <nav id="site-links" aria-label="Main navigation">
           <a href="${homeUrl.href}">Home</a>
           <a href="${aboutUrl.href}">About</a>
-          <a href="${eventsUrl.href}">Game Jams</a>
+          <a href="${eventsUrl.href}">Calendar &amp; Events</a>
         </nav>
       </header>
     `;
 
     const menuButton = this.shadowRoot.querySelector(".menu-toggle");
     const navigation = this.shadowRoot.querySelector("nav");
+    navigation.querySelectorAll("a").forEach((link) => {
+      const target = new URL(link.href);
+      if (!target.hash && target.pathname === window.location.pathname) {
+        link.setAttribute("aria-current", "page");
+      }
+    });
 
     menuButton.addEventListener("click", () => {
       const isExpanded = menuButton.getAttribute("aria-expanded") === "true";
@@ -104,6 +117,13 @@ class SiteNavbar extends HTMLElement {
       if (event.target instanceof Element && event.target.closest("a")) {
         menuButton.setAttribute("aria-expanded", "false");
         navigation.removeAttribute("data-open");
+      }
+    });
+    this.shadowRoot.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && menuButton.getAttribute("aria-expanded") === "true") {
+        menuButton.setAttribute("aria-expanded", "false");
+        navigation.removeAttribute("data-open");
+        menuButton.focus();
       }
     });
   }

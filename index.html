@@ -9,9 +9,11 @@
       content="The Game Developers Guild is a Student Organization at Northern Kentucky University focused on game development and Game Jams."
     >
     <title>Game Developers Guild | NKU</title>
+    <link rel="icon" type="image/png" sizes="64x64" href="./assets/images/favicon.png">
     <link rel="stylesheet" href="./assets/css/styles.css">
     <script type="module" src="./assets/js/navbar.js"></script>
     <script type="module" src="./assets/js/flame-title.js"></script>
+    <script type="module" src="./assets/js/events-page.js"></script>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -21,7 +23,7 @@
       <section class="hero" id="top" aria-labelledby="hero-title">
         <div class="hero__copy">
           <p class="eyebrow">Student Organization at Northern Kentucky University</p>
-          <h1 id="hero-title" class="hero__title">
+          <h1 id="hero-title" class="hero__title" aria-label="Game Developers Guild">
             <span class="hero__title-fallback">Game Developers<br>Guild</span>
             <svg
               class="hero__title-video"
@@ -60,10 +62,18 @@
 
         <img
           class="hero__art"
-          src="./assets/images/GameDevGuild_Logo_A_beta.png"
+          src="./assets/images/guild-logo-joey.png"
           alt=""
           aria-hidden="true"
         >
+      </section>
+
+      <section class="current-event content-panel" id="current-event" aria-labelledby="current-event-title">
+        <p class="eyebrow">Upcoming event</p>
+        <h2 id="current-event-title"><a href="./event.html?id=scream-jam-2026">SCREAM JAM 2026</a></h2>
+        <p>October 16–23, 2026 · A week-long horror-themed Game Jam hosted by SCREAM ZONE.</p>
+        <p>The Guild plans to participate. Club participation details are coming soon.</p>
+        <a class="button button--quiet" href="./calendar.html">Calendar &amp; Events</a>
       </section>
 
       <section class="content-panel about" id="about" aria-labelledby="about-title">
