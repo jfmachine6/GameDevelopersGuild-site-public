@@ -17,8 +17,10 @@
     <site-navbar></site-navbar>
     <main id="main" class="events-page">
       <a class="calendar-back" href="./calendar.html">&larr; Calendar &amp; Events</a>
-      <article id="event-detail" class="event-detail" aria-labelledby="event-title"></article>
-      <noscript><p>Enable JavaScript to view event details, or <a href="https://itch.io/jam/scream-jam-2026">visit the official SCREAM JAM page</a>.</p></noscript>
+      <article id="event-detail" class="event-detail" aria-labelledby="event-title" aria-live="polite">
+        <h1 id="event-title">Event details</h1><p role="status">Loading published event…</p>
+      </article>
+      <noscript><p>Enable JavaScript to load published event details.</p></noscript>
     </main>
     <footer class="footer"><span>Game Developers Guild</span><span>Student Organization at Northern Kentucky University</span></footer>
   </body>

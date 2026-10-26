@@ -216,6 +216,8 @@ h3 {
 .current-event h2 { font-size: 1.7rem; }
 .current-event h2 a { text-decoration: none; }
 .current-event > p:not(.eyebrow) { color: var(--muted); }
+.current-event > .button { margin: 16px 8px 0 0; }
+.current-event > span { display: block; }
 .event-facts { display: grid; gap: 18px; margin: 22px 0; }
 .event-facts dt { color: var(--gold); font-size: .85rem; margin-bottom: 4px; }
 .event-facts dd { margin: 0; overflow-wrap: anywhere; }

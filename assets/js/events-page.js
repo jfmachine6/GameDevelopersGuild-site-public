@@ -1,83 +1,157 @@
-import { semester, events, localDateKey, eventStatus, featuredEvent, formatDate, eventLink, dateRange } from "./events.js";
+import { loadFeed, localDateKey, eventDay, eventStatus, featuredEvent, formatDate, eventLink } from "./events.js";
+import { element, link, dateRange, renderContent, showError } from "./feed-render.js";
 
-const today = localDateKey();
 const current = document.querySelector("#current-event");
 const calendar = document.querySelector("#semester-calendar");
 const agenda = document.querySelector("#semester-agenda");
 const detail = document.querySelector("#event-detail");
+const feedStatus = document.querySelector("#feed-status");
 
-if (current) {
-  const event = featuredEvent(today);
-  current.innerHTML = event
-    ? `<p class="eyebrow">${eventStatus(event, today)}</p>
-       <h2 id="current-event-title"><a href="${eventLink(event)}">${event.title}</a></h2>
-       <p>${event.description}</p><p>${event.participation}</p>
-       <dl class="event-facts"><div><dt>Dates</dt><dd>${dateRange(event)}</dd></div>
-       <div><dt>Location</dt><dd>${event.location}</dd></div></dl>
-       <div class="hero__links"><a class="button button--gold" href="${eventLink(event)}">Event details</a>
-       <a class="button button--quiet" href="./calendar.html">View calendar</a></div>`
-    : `<p class="eyebrow">Events</p><h2 id="current-event-title">No upcoming events listed</h2>
-       <p>Check the calendar for updates.</p><a class="button button--quiet" href="./calendar.html">View calendar</a>`;
+function summary(event) {
+  const card = element("article", null, "agenda-event");
+  card.append(element("p", eventStatus(event), "event-status"));
+  const heading = element("h3");
+  heading.append(link(event.title, eventLink(event)));
+  card.append(heading, dateRange(event));
+  if (event.type) card.append(element("p", event.type));
+  card.append(link("View event details", eventLink(event)));
+  return card;
 }
 
-if (calendar && agenda) {
-  calendar.innerHTML = semester.months.map((month) => {
-    const monthName = new Date(semester.year, month, 1).toLocaleDateString("en-US", { month: "long" });
-    const firstDay = new Date(semester.year, month, 1).getDay();
-    const days = new Date(semester.year, month + 1, 0).getDate();
-    const cells = Array.from({ length: firstDay }, () => '<div class="calendar-day calendar-day--empty" aria-hidden="true"></div>');
-    for (let day = 1; day <= days; day++) {
-      const date = `${semester.year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-      const dayEvents = events.filter((event) => event.start <= date && event.end >= date);
-      cells.push(`<div class="calendar-day${date === today ? " calendar-day--today" : ""}">
-        <time datetime="${date}" aria-label="${formatDate(date)}"${date === today ? ' aria-current="date"' : ""}>${day}</time>
-        ${dayEvents.map((event) => `<a class="calendar-event" href="${eventLink(event)}">${event.title}
-          <small>${date === event.start ? "Starts" : date === event.end ? "Submission deadline" : "In progress"}</small></a>`).join("")}</div>`);
-    }
-    while (cells.length % 7) cells.push('<div class="calendar-day calendar-day--empty" aria-hidden="true"></div>');
-    return `<section class="calendar-month"><h2>${monthName} ${semester.year}</h2>
-      <div class="calendar-scroll" tabindex="0" role="region" aria-label="${monthName} calendar, scroll horizontally on small screens">
-      <div class="calendar-weekdays" aria-hidden="true">${["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => `<span>${day}</span>`).join("")}</div>
-      <div class="calendar-grid">${cells.join("")}</div></div></section>`;
-  }).join("");
-
-  agenda.innerHTML = semester.months.map((month) => {
-    const monthName = new Date(semester.year, month, 1).toLocaleDateString("en-US", { month: "long" });
-    const prefix = `${semester.year}-${String(month + 1).padStart(2, "0")}`;
-    const monthEvents = events.filter((event) => event.start.slice(0, 7) <= prefix && event.end.slice(0, 7) >= prefix);
-    return `<section class="agenda-month"><h2>${monthName}</h2>${monthEvents.length
-      ? monthEvents.map((event) => `<article class="agenda-event"><div class="event-status">${eventStatus(event, today)}</div>
-        <h3><a href="${eventLink(event)}">${event.title}</a></h3><p>${dateRange(event)}</p>
-        <p>${event.participation}</p><a href="${eventLink(event)}">View event details</a></article>`).join("")
-      : '<p class="events-note">No events announced.</p>'}</section>`;
-  }).join("");
-
-  const controls = document.querySelectorAll("[data-view]");
-  controls.forEach((button) => button.addEventListener("click", () => {
-    const calendarView = button.dataset.view === "calendar";
-    calendar.hidden = !calendarView;
-    agenda.hidden = calendarView;
-    controls.forEach((control) => control.setAttribute("aria-pressed", String(control === button)));
-  }));
-}
-
-if (detail) {
-  const event = events.find((item) => item.id === new URLSearchParams(window.location.search).get("id"));
+function renderFeatured(events) {
+  const event = featuredEvent(events);
+  const heading = element("h2");
+  heading.id = "current-event-title";
+  current.replaceChildren();
   if (event) {
-    document.title = `${event.title} | Game Developers Guild`;
-    document.querySelector('meta[name="description"]').content = event.description;
-    detail.innerHTML = `<header><p class="eyebrow">${semester.name} / Game Developers Guild</p>
-      <p class="event-status">${eventStatus(event, today)}</p><h1 id="event-title">${event.title}</h1></header>
-      <div class="event-detail__body"><div><h2>About the Game Jam</h2><p>${event.description}</p>
-      <h2>Guild participation</h2><p class="participation-note">${event.participation}</p>
-      <h2>Jam details</h2><ul>${event.notes.map((note) => `<li>${note}</li>`).join("")}</ul>
-      <a class="button button--gold" href="${event.officialUrl}">Official jam page &amp; rules</a></div>
-      <dl class="event-facts"><div><dt>Submission period</dt><dd>${dateRange(event)}</dd></div>
-      <div><dt>Location</dt><dd>${event.location}</dd></div>
-      <div><dt>Club schedule</dt><dd>Details coming soon</dd></div></dl></div>`;
+    heading.append(link(event.title, eventLink(event)));
+    current.append(element("p", eventStatus(event), "eyebrow"), heading, dateRange(event));
+    if (event.type) current.append(element("p", event.type));
+    current.append(link("Event details", eventLink(event), "button button--gold"));
   } else {
-    document.title = "Event not found | Game Developers Guild";
-    detail.innerHTML = '<h1 id="event-title">Event not found</h1><p>This event is not listed. <a href="./calendar.html">Browse the calendar</a>.</p>';
-    console.warn("Event not found:", new URLSearchParams(window.location.search).get("id"));
+    heading.textContent = "No upcoming events listed";
+    current.append(heading, element("p", "Check the calendar for updates."));
   }
+  current.append(link("Calendar & Events", "./calendar.html", "button button--quiet"));
+}
+
+function renderCalendar(events) {
+  const today = localDateKey();
+  const months = new Set();
+  // Keep the current semester visible, including months without published events.
+  const year = Number(today.slice(0, 4));
+  const month = Number(today.slice(5, 7)) - 1;
+  const start = month < 5 ? 0 : month < 8 ? 5 : 8;
+  const end = start === 0 ? 4 : start === 5 ? 7 : 11;
+  for (let index = start; index <= end; index++) months.add(`${year}-${String(index + 1).padStart(2, "0")}`);
+  events.forEach((event) => {
+    const first = eventDay(event.date.start, event.date.timeZone).slice(0, 7);
+    const last = eventDay(event.date.end || event.date.start, event.date.timeZone).slice(0, 7);
+    const cursor = new Date(`${first}-01T12:00:00Z`);
+    while (cursor.toISOString().slice(0, 7) <= last) {
+      months.add(cursor.toISOString().slice(0, 7));
+      cursor.setUTCMonth(cursor.getUTCMonth() + 1);
+    }
+  });
+  calendar.replaceChildren();
+  agenda.replaceChildren();
+  [...months].sort().forEach((prefix) => {
+    const [year, month] = prefix.split("-").map(Number);
+    const monthName = new Date(Date.UTC(year, month - 1, 1)).toLocaleDateString("en-US", { month: "long", year: "numeric", timeZone: "UTC" });
+    const monthEvents = events.filter((event) =>
+      eventDay(event.date.start, event.date.timeZone).slice(0, 7) <= prefix &&
+      eventDay(event.date.end || event.date.start, event.date.timeZone).slice(0, 7) >= prefix);
+    const agendaMonth = element("section", null, "agenda-month");
+    agendaMonth.append(element("h2", monthName));
+    if (!monthEvents.length) agendaMonth.append(element("p", "No events announced.", "events-note"));
+    monthEvents.forEach((event) => agendaMonth.append(summary(event)));
+    agenda.append(agendaMonth);
+
+    const calendarMonth = element("section", null, "calendar-month");
+    calendarMonth.append(element("h2", monthName));
+    const scroll = element("div", null, "calendar-scroll");
+    scroll.tabIndex = 0;
+    scroll.setAttribute("role", "region");
+    scroll.setAttribute("aria-label", `${monthName} calendar, scroll horizontally on small screens`);
+    const weekdays = element("div", null, "calendar-weekdays");
+    weekdays.setAttribute("aria-hidden", "true");
+    ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].forEach((day) => weekdays.append(element("span", day)));
+    const grid = element("div", null, "calendar-grid");
+    const blank = () => {
+      const cell = element("div", null, "calendar-day calendar-day--empty");
+      cell.setAttribute("aria-hidden", "true");
+      grid.append(cell);
+    };
+    for (let index = 0; index < new Date(Date.UTC(year, month - 1, 1)).getUTCDay(); index++) blank();
+    const days = new Date(Date.UTC(year, month, 0)).getUTCDate();
+    for (let day = 1; day <= days; day++) {
+      const date = `${prefix}-${String(day).padStart(2, "0")}`;
+      const cell = element("div", null, `calendar-day${date === today ? " calendar-day--today" : ""}`);
+      const time = element("time", String(day));
+      time.dateTime = date;
+      time.setAttribute("aria-label", formatDate(date));
+      if (date === today) time.setAttribute("aria-current", "date");
+      cell.append(time);
+      monthEvents.filter((event) => eventDay(event.date.start, event.date.timeZone) <= date &&
+        eventDay(event.date.end || event.date.start, event.date.timeZone) >= date)
+        .forEach((event) => cell.append(link(event.title, eventLink(event), "calendar-event")));
+      grid.append(cell);
+    }
+    while (grid.children.length % 7) blank();
+    scroll.append(weekdays, grid);
+    calendarMonth.append(scroll);
+    calendar.append(calendarMonth);
+  });
+}
+
+function renderDetail(events) {
+  const id = new URLSearchParams(window.location.search).get("id");
+  // Preserve links shared before the Notion feed was connected.
+  const event = events.find((item) => item.id === (id === "scream-jam-2026" ? "405b81b5-eea9-80a5-9eef-d042be47aa0a" : id));
+  if (!event) {
+    document.title = "Event not found | Game Developers Guild";
+    const heading = element("h1", "Event not found");
+    heading.id = "event-title";
+    detail.replaceChildren(heading, element("p", "This event is not currently published."), link("Browse the calendar", "./calendar.html"));
+    return;
+  }
+  document.title = `${event.title} | Game Developers Guild`;
+  const heading = element("h1", event.title);
+  heading.id = "event-title";
+  const body = element("div", null, "published-content");
+  renderContent(body, event.content);
+  if (!event.content.length) body.append(element("p", "More event details will be posted here."));
+  detail.replaceChildren(element("p", eventStatus(event), "event-status"), heading, dateRange(event));
+  if (event.type) detail.append(element("p", event.type));
+  detail.append(body);
+  const related = element("section");
+  related.append(element("h2", "Event history"), element("p", "Loading related entries…", "events-note"));
+  detail.append(related);
+  loadFeed("history").then((history) => {
+    related.replaceChildren(element("h2", "Event history"));
+    const entries = history.filter((entry) => entry.eventIds.includes(event.id));
+    if (!entries.length) related.append(element("p", "No published history entries yet."));
+    entries.forEach((entry) => related.append(link(entry.title, `./history.html?id=${encodeURIComponent(entry.id)}`, "history-link")));
+  }).catch((error) => showError(related, error));
+}
+
+const controls = document.querySelectorAll("[data-view]");
+controls.forEach((button) => button.addEventListener("click", () => {
+  const calendarView = button.dataset.view === "calendar";
+  calendar.hidden = !calendarView;
+  agenda.hidden = calendarView;
+  controls.forEach((control) => control.setAttribute("aria-pressed", String(control === button)));
+}));
+
+if (current || calendar || detail) {
+  loadFeed("events").then((events) => {
+    if (current) renderFeatured(events);
+    if (calendar && agenda) renderCalendar(events);
+    if (detail) renderDetail(events);
+    if (feedStatus) feedStatus.textContent = events.length ? "Published events. Times shown in NKU's Eastern time zone." : "No events are currently published.";
+  }).catch((error) => {
+    if (current) showError(current, error, "current-event-title");
+    if (detail) showError(detail, error, "event-title");
+    if (feedStatus) showError(feedStatus, error);
+  });
 }

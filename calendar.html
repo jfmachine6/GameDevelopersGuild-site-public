@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#101114">
-    <meta name="description" content="Game Developers Guild events and Fall 2026 calendar.">
+    <meta name="description" content="Published Game Developers Guild events and calendar.">
     <title>Calendar &amp; Events | Game Developers Guild</title>
     <link rel="icon" type="image/png" sizes="64x64" href="./assets/images/favicon.png">
     <link rel="stylesheet" href="./assets/css/styles.css">
@@ -17,16 +17,16 @@
     <site-navbar></site-navbar>
     <main id="main" class="events-page">
       <header class="events-heading">
-        <div><p class="eyebrow">Fall 2026 / Game Developers Guild</p><h1>Calendar &amp; Events</h1></div>
+        <div><p class="eyebrow">Game Developers Guild</p><h1>Calendar &amp; Events</h1></div>
         <div class="view-switch" role="group" aria-label="Calendar view">
           <button type="button" data-view="calendar" aria-pressed="false" aria-controls="semester-calendar">Calendar</button>
           <button type="button" data-view="agenda" aria-pressed="true" aria-controls="semester-agenda">Agenda</button>
         </div>
       </header>
-      <p class="events-note">Only announced events are listed. Club participation arrangements are coming soon. SCREAM JAM runs October 16–23; see the official jam page for exact deadlines.</p>
+      <div id="feed-status" class="events-note" aria-live="polite"><p role="status">Loading published events…</p></div>
       <div id="semester-calendar" hidden></div>
       <div id="semester-agenda"></div>
-      <noscript><p>SCREAM JAM 2026 runs October 16–23. <a href="https://itch.io/jam/scream-jam-2026">Official jam details</a>. Enable JavaScript for calendar views.</p></noscript>
+      <noscript><p>Enable JavaScript to load published events and calendar views.</p></noscript>
     </main>
     <footer class="footer"><span>Game Developers Guild</span><span>Student Organization at Northern Kentucky University</span></footer>
   </body>
