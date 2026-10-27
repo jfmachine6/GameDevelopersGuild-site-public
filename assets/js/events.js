@@ -97,7 +97,7 @@ function validateRuns(runs) {
 }
 
 export async function loadFeed(kind) {
-  if (!["events", "history", "members"].includes(kind)) throw new Error("Unknown feed.");
+  if (!["events", "history", "members", "news"].includes(kind)) throw new Error("Unknown feed.");
   const response = await fetch(`${FEED_URL}/${kind}`, {
     cache: "no-store", signal: AbortSignal.timeout(20000)
   });
@@ -124,6 +124,14 @@ export async function loadFeed(kind) {
       if (!Array.isArray(record.eventIds) || !record.eventIds.every((id) => typeof id === "string") ||
           !Array.isArray(record.thumbnails)) throw new Error("Invalid history entry.");
       record.thumbnails.forEach((image) => safeUrl(image.url));
+    } else if (kind === "news") {
+      if (!Array.isArray(record.authors) ||
+          !record.authors.every((author) => typeof author === "string" && author.trim()) ||
+          (record.date !== null && (!record.date || typeof record.date.start !== "string" ||
+            (record.date.timeZone != null && typeof record.date.timeZone !== "string") ||
+            !Number.isFinite(timestamp(record.date.start, record.date.timeZone))))) {
+        throw new Error("Invalid news article.");
+      }
     } else {
       if (!Array.isArray(record.photos) || !Array.isArray(record.roles) ||
           !record.roles.every((role) => typeof role === "string") ||
@@ -132,6 +140,11 @@ export async function loadFeed(kind) {
       }
       record.photos.forEach((photo) => safeUrl(photo.url));
     }
+  }
+  if (kind === "news") {
+    return [...payload.news].sort((a, b) =>
+      (b.date ? timestamp(b.date.start, b.date.timeZone) : -Infinity) -
+      (a.date ? timestamp(a.date.start, a.date.timeZone) : -Infinity) || a.title.localeCompare(b.title));
   }
   return kind === "events"
     ? payload.events.sort((a, b) => timestamp(a.date.start, a.date.timeZone) - timestamp(b.date.start, b.date.timeZone))

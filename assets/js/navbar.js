@@ -13,6 +13,7 @@ class SiteNavbar extends HTMLElement {
     const eventsUrl = new URL("calendar.html", siteRoot);
     const historyUrl = new URL("history.html", siteRoot);
     const membersUrl = new URL("members.html", siteRoot);
+    const newsUrl = new URL("news.html", siteRoot);
 
     this.shadowRoot.innerHTML = `
       <style>
@@ -60,7 +61,7 @@ class SiteNavbar extends HTMLElement {
           font: 600 12px Arial, Helvetica, sans-serif;
           padding: 9px 12px;
         }
-        @media (max-width: 1050px) {
+        @media (max-width: 1150px) {
           .bar { min-height: 96px; padding: 0 16px; }
           .brand { gap: 8px; }
           .brand__logo { width: 72px; height: 72px; }
@@ -96,6 +97,7 @@ class SiteNavbar extends HTMLElement {
           <a href="${homeUrl.href}">Home</a>
           <a href="${aboutUrl.href}">About</a>
           <a href="${eventsUrl.href}">Calendar &amp; Events</a>
+          <a href="${newsUrl.href}">News</a>
           <a href="${historyUrl.href}">History</a>
           <a href="${membersUrl.href}">Members</a>
         </nav>

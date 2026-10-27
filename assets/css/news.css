@@ -1,0 +1,10 @@
+.news-grid { display: grid; gap: 24px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); margin-top: 30px; }
+.news-card { background: var(--surface); border: 1px solid var(--border); border-top: 3px solid var(--red); border-radius: 8px; min-width: 0; overflow-wrap: anywhere; padding: 24px; }
+.news-card h2 { font-size: 1.4rem; margin: 0 0 16px; }
+.news-card h2 a { color: var(--gold); }
+.news-facts, .news-summary { color: var(--muted); }
+.news-facts { font-size: .9rem; }
+.news-facts p { margin: 8px 0; }
+.news-summary { margin: 20px 0; }
+.news-article { margin-top: 30px; min-width: 0; overflow-wrap: anywhere; }
+#news-title { overflow-wrap: anywhere; }
